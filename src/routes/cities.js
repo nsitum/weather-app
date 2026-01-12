@@ -66,4 +66,43 @@ router.delete("/cities/delete/:id", async (ctx) => {
   ctx.body = deleted;
 });
 
+router.get("/cities/stats", async (ctx) => {
+  const year = new Date().getFullYear();
+
+  const stats = await prisma.forecast.groupBy({
+    by: ["cityId", "type"],
+    _count: { type: true },
+    where: {
+      time: {
+        gte: new Date(`${year}-01-01`),
+        lte: new Date(`${year}-12-31`),
+      },
+    },
+  });
+
+  if (stats.length === 0) {
+    ctx.status = 200;
+    ctx.body = [];
+    return;
+  }
+
+  const cities = await prisma.city.findMany();
+  const map = {};
+
+  stats.forEach((row) => {
+    if (!map[row.cityId]) {
+      const city = cities.find((c) => c.id === row.cityId);
+      map[row.cityId] = {
+        cityId: row.cityId,
+        cityName: city?.name,
+        stats: {},
+      };
+    }
+    map[row.cityId].stats[row.type] = row._count.type;
+  });
+
+  ctx.status = 200;
+  ctx.body = Object.values(map);
+});
+
 module.exports = router;

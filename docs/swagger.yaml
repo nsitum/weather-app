@@ -109,6 +109,15 @@ paths:
         "404":
           description: Not found
 
+  /cities/stats:
+    get:
+      summary: Weather statistics list per city for current year
+      security:
+        - basicAuth: []
+      responses:
+        200:
+          description: OK
+
   /forecasts/create:
     post:
       summary: Create forecast

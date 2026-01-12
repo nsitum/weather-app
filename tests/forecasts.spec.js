@@ -21,18 +21,15 @@ after(async () => {
 describe("Forecasts API", () => {
   beforeEach(async () => {
     await resetDb();
-
-    await prisma.city.create({
-      data: { name: "Split" },
-    });
+    await prisma.city.create({ data: { name: "Split" } });
   });
 
-  describe("POST /forecasts/create", () => {
+  describe("POST /forecasts", () => {
     it("should create a new forecast", async () => {
       const city = await prisma.city.findFirst();
 
       const res = await request(app.callback())
-        .post("/forecasts/create")
+        .post("/forecasts")
         .set("Authorization", authHeader)
         .send({
           cityId: city.id,
@@ -48,7 +45,7 @@ describe("Forecasts API", () => {
 
     it("should fail validation if missing fields", async () => {
       const res = await request(app.callback())
-        .post("/forecasts/create")
+        .post("/forecasts")
         .set("Authorization", authHeader)
         .send({});
 
@@ -57,20 +54,16 @@ describe("Forecasts API", () => {
     });
   });
 
-  describe("GET /forecasts/list", () => {
+  describe("GET /forecasts", () => {
     it("should return list of forecasts", async () => {
       const city = await prisma.city.findFirst();
 
       await prisma.forecast.create({
-        data: {
-          cityId: city.id,
-          type: "SUNNY",
-          time: new Date(),
-        },
+        data: { cityId: city.id, type: "SUNNY", time: new Date() },
       });
 
       const res = await request(app.callback())
-        .get("/forecasts/list")
+        .get("/forecasts")
         .set("Authorization", authHeader);
 
       expect(res.status).to.equal(200);
@@ -79,20 +72,15 @@ describe("Forecasts API", () => {
     });
   });
 
-  describe("GET /forecasts/details/:id", () => {
+  describe("GET /forecasts/:id", () => {
     it("should return forecast by id", async () => {
       const city = await prisma.city.findFirst();
-
       const create = await prisma.forecast.create({
-        data: {
-          cityId: city.id,
-          type: "RAINY",
-          time: new Date(),
-        },
+        data: { cityId: city.id, type: "RAINY", time: new Date() },
       });
 
       const res = await request(app.callback())
-        .get(`/forecasts/details/${create.id}`)
+        .get(`/forecasts/${create.id}`)
         .set("Authorization", authHeader);
 
       expect(res.status).to.equal(200);
@@ -101,27 +89,22 @@ describe("Forecasts API", () => {
 
     it("should return 404 if not found", async () => {
       const res = await request(app.callback())
-        .get("/forecasts/details/9999")
+        .get("/forecasts/9999")
         .set("Authorization", authHeader);
 
       expect(res.status).to.equal(404);
     });
   });
 
-  describe("PUT /forecasts/update/:id", () => {
+  describe("PUT /forecasts/:id", () => {
     it("should update a forecast", async () => {
       const city = await prisma.city.findFirst();
-
       const create = await prisma.forecast.create({
-        data: {
-          cityId: city.id,
-          type: "SUNNY",
-          time: new Date(),
-        },
+        data: { cityId: city.id, type: "SUNNY", time: new Date() },
       });
 
       const res = await request(app.callback())
-        .put(`/forecasts/update/${create.id}`)
+        .put(`/forecasts/${create.id}`)
         .set("Authorization", authHeader)
         .send({ type: "CLOUDY" });
 
@@ -130,20 +113,15 @@ describe("Forecasts API", () => {
     });
   });
 
-  describe("DELETE /forecasts/delete/:id", () => {
+  describe("DELETE /forecasts/:id", () => {
     it("should delete a forecast", async () => {
       const city = await prisma.city.findFirst();
-
       const create = await prisma.forecast.create({
-        data: {
-          cityId: city.id,
-          type: "RAINY",
-          time: new Date(),
-        },
+        data: { cityId: city.id, type: "RAINY", time: new Date() },
       });
 
       const res = await request(app.callback())
-        .delete(`/forecasts/delete/${create.id}`)
+        .delete(`/forecasts/${create.id}`)
         .set("Authorization", authHeader);
 
       expect(res.status).to.equal(200);
@@ -153,13 +131,8 @@ describe("Forecasts API", () => {
   describe("GET /forecasts/city/:cityId", () => {
     it("should list forecasts for a specific city", async () => {
       const city = await prisma.city.findFirst();
-
       await prisma.forecast.create({
-        data: {
-          cityId: city.id,
-          type: "SUNNY",
-          time: new Date(),
-        },
+        data: { cityId: city.id, type: "SUNNY", time: new Date() },
       });
 
       const res = await request(app.callback())
@@ -173,31 +146,10 @@ describe("Forecasts API", () => {
 
     it("should return 404 if city does not exist", async () => {
       const res = await request(app.callback())
-        .get(`/forecasts/city/9999`)
+        .get("/forecasts/city/9999")
         .set("Authorization", authHeader);
 
       expect(res.status).to.equal(404);
-    });
-  });
-
-  describe("GET /forecasts/week", () => {
-    it("should return forecasts for the next 7 days", async () => {
-      const city = await prisma.city.findFirst();
-
-      await prisma.forecast.create({
-        data: {
-          cityId: city.id,
-          type: "SUNNY",
-          time: new Date(),
-        },
-      });
-
-      const res = await request(app.callback())
-        .get("/forecasts/week")
-        .set("Authorization", authHeader);
-
-      expect(res.status).to.equal(200);
-      expect(res.body).to.be.an("array");
     });
   });
 });

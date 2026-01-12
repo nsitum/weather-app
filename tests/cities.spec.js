@@ -23,10 +23,10 @@ describe("Cities API", () => {
     await resetDb();
   });
 
-  describe("POST /cities/create", () => {
+  describe("POST /cities", () => {
     it("should create a new city", async () => {
       const res = await request(app.callback())
-        .post("/cities/create")
+        .post("/cities")
         .set("Authorization", authHeader)
         .send({ name: "Split" });
 
@@ -37,7 +37,7 @@ describe("Cities API", () => {
 
     it("should fail validation when name missing", async () => {
       const res = await request(app.callback())
-        .post("/cities/create")
+        .post("/cities")
         .set("Authorization", authHeader)
         .send({});
 
@@ -47,12 +47,12 @@ describe("Cities API", () => {
 
     it("should fail if city already exists", async () => {
       await request(app.callback())
-        .post("/cities/create")
+        .post("/cities")
         .set("Authorization", authHeader)
         .send({ name: "Zagreb" });
 
       const res = await request(app.callback())
-        .post("/cities/create")
+        .post("/cities")
         .set("Authorization", authHeader)
         .send({ name: "Zagreb" });
 
@@ -61,15 +61,15 @@ describe("Cities API", () => {
     });
   });
 
-  describe("GET /cities/list", () => {
+  describe("GET /cities", () => {
     it("should return list of cities", async () => {
       await request(app.callback())
-        .post("/cities/create")
+        .post("/cities")
         .set("Authorization", authHeader)
         .send({ name: "Rijeka" });
 
       const res = await request(app.callback())
-        .get("/cities/list")
+        .get("/cities")
         .set("Authorization", authHeader);
 
       expect(res.status).to.equal(200);
@@ -78,15 +78,15 @@ describe("Cities API", () => {
     });
   });
 
-  describe("GET /cities/details/:id", () => {
+  describe("GET /cities/:id", () => {
     it("should return city if exists", async () => {
       const create = await request(app.callback())
-        .post("/cities/create")
+        .post("/cities")
         .set("Authorization", authHeader)
         .send({ name: "Osijek" });
 
       const res = await request(app.callback())
-        .get(`/cities/details/${create.body.id}`)
+        .get(`/cities/${create.body.id}`)
         .set("Authorization", authHeader);
 
       expect(res.status).to.equal(200);
@@ -95,22 +95,22 @@ describe("Cities API", () => {
 
     it("should return 404 if not found", async () => {
       const res = await request(app.callback())
-        .get("/cities/details/9999")
+        .get("/cities/9999")
         .set("Authorization", authHeader);
 
       expect(res.status).to.equal(404);
     });
   });
 
-  describe("PUT /cities/update/:id", () => {
+  describe("PUT /cities/:id", () => {
     it("should update a city", async () => {
       const create = await request(app.callback())
-        .post("/cities/create")
+        .post("/cities")
         .set("Authorization", authHeader)
         .send({ name: "OldName" });
 
       const res = await request(app.callback())
-        .put(`/cities/update/${create.body.id}`)
+        .put(`/cities/${create.body.id}`)
         .set("Authorization", authHeader)
         .send({ name: "NewName" });
 
@@ -119,15 +119,15 @@ describe("Cities API", () => {
     });
   });
 
-  describe("DELETE /cities/delete/:id", () => {
+  describe("DELETE /cities/:id", () => {
     it("should delete a city", async () => {
       const create = await request(app.callback())
-        .post("/cities/create")
+        .post("/cities")
         .set("Authorization", authHeader)
         .send({ name: "DeleteMe" });
 
       const res = await request(app.callback())
-        .delete(`/cities/delete/${create.body.id}`)
+        .delete(`/cities/${create.body.id}`)
         .set("Authorization", authHeader);
 
       expect(res.status).to.equal(200);

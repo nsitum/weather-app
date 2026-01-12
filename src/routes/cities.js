@@ -80,13 +80,14 @@ router.get("/cities/stats", async (ctx) => {
     },
   });
 
-  if (stats.length === 0) {
+  if (!stats.length) {
     ctx.status = 200;
     ctx.body = [];
     return;
   }
 
-  const cities = await prisma.city.findMany();
+  const cities = await prisma.city.findMany(); // <-- samo fetchamo sve gradove
+
   const map = {};
 
   stats.forEach((row) => {
@@ -101,7 +102,6 @@ router.get("/cities/stats", async (ctx) => {
     map[row.cityId].stats[row.type] = row._count.type;
   });
 
-  ctx.status = 200;
   ctx.body = Object.values(map);
 });
 

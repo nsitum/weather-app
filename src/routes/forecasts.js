@@ -111,13 +111,16 @@ router.get("/forecasts/city/:cityId", async (ctx) => {
 
 router.get("/forecasts/week", async (ctx) => {
   const now = new Date();
-  const weekAhead = new Date();
+  const weekAhead = new Date(now);
   weekAhead.setDate(now.getDate() + 7);
 
-  const cityId = ctx.query.cityId ? Number(ctx.query.cityId) : undefined;
+  let cityId = undefined;
 
-  if (ctx.query.cityId && Number.isNaN(cityId)) {
-    throw new ValidationError("cityId must be a number if provided");
+  if (ctx.query.cityId !== undefined) {
+    cityId = Number(ctx.query.cityId);
+    if (Number.isNaN(cityId)) {
+      throw new ValidationError("cityId must be a number if provided");
+    }
   }
 
   const where = {
@@ -127,7 +130,7 @@ router.get("/forecasts/week", async (ctx) => {
     },
   };
 
-  if (cityId) {
+  if (cityId !== undefined) {
     where.cityId = cityId;
   }
 
@@ -137,11 +140,12 @@ router.get("/forecasts/week", async (ctx) => {
     include: { city: true },
   });
 
+  ctx.status = 200;
   ctx.body = forecasts;
 });
 
 router.get("/forecasts/top/:type", async (ctx) => {
-  const rawType = ctx.params.type; // npr. "sunny" ili "SUNNY"
+  const rawType = ctx.params.type;
   const type = rawType.toUpperCase();
 
   if (!VALID_WEATHER_TYPES.includes(type)) {
@@ -184,7 +188,7 @@ router.get("/forecasts/top/:type", async (ctx) => {
   const cityDayMap = new Map();
 
   for (const forecast of forecasts) {
-    const dateKey = forecast.time.toISOString().slice(0, 10); // "2026-01-10"
+    const dateKey = forecast.time.toISOString().slice(0, 10);
     if (!cityDayMap.has(forecast.cityId)) {
       cityDayMap.set(forecast.cityId, {
         city: forecast.city,

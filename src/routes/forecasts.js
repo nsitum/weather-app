@@ -7,7 +7,7 @@ const VALID_WEATHER_TYPES = ["SUNNY", "RAINY", "SNOWY", "CLOUDY", "WINDY"];
 
 const router = new Router();
 
-router.post("/forecasts/create", async (ctx) => {
+router.post("/forecasts", async (ctx) => {
   const { cityId, type, time, comment } = ctx.request.body;
 
   if (!cityId || !type || !time) {
@@ -27,14 +27,14 @@ router.post("/forecasts/create", async (ctx) => {
   ctx.body = forecast;
 });
 
-router.get("/forecasts/list", async (ctx) => {
+router.get("/forecasts", async (ctx) => {
   const forecasts = await prisma.forecast.findMany({
     include: { city: true },
   });
   ctx.body = forecasts;
 });
 
-router.get("/forecasts/details/:id", async (ctx) => {
+router.get("/forecasts/:id", async (ctx) => {
   const id = Number(ctx.params.id);
 
   const forecast = await prisma.forecast.findUnique({
@@ -49,7 +49,7 @@ router.get("/forecasts/details/:id", async (ctx) => {
   ctx.body = forecast;
 });
 
-router.put("/forecasts/update/:id", async (ctx) => {
+router.put("/forecasts/:id", async (ctx) => {
   const id = Number(ctx.params.id);
   const { type, time, comment } = ctx.request.body;
 
@@ -70,7 +70,7 @@ router.put("/forecasts/update/:id", async (ctx) => {
   ctx.body = forecast;
 });
 
-router.delete("/forecasts/delete/:id", async (ctx) => {
+router.delete("/forecasts/:id", async (ctx) => {
   const id = Number(ctx.params.id);
 
   const existing = await prisma.forecast.findUnique({ where: { id } });
@@ -140,7 +140,7 @@ router.get("/forecasts/week", async (ctx) => {
   ctx.body = forecasts;
 });
 
-router.get("/cities/top/:type", async (ctx) => {
+router.get("/forecasts/top/:type", async (ctx) => {
   const rawType = ctx.params.type; // npr. "sunny" ili "SUNNY"
   const type = rawType.toUpperCase();
 

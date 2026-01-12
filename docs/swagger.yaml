@@ -17,7 +17,7 @@ security:
   - basicAuth: []
 
 paths:
-  /cities/create:
+  /cities:
     post:
       summary: Create a city
       security:
@@ -41,7 +41,6 @@ paths:
         "422":
           description: Validation error
 
-  /cities/list:
     get:
       summary: List all cities
       security:
@@ -50,7 +49,7 @@ paths:
         "200":
           description: OK
 
-  /cities/details/{id}:
+  /cities/{id}:
     get:
       summary: Get city by ID
       security:
@@ -67,7 +66,6 @@ paths:
         "404":
           description: Not found
 
-  /cities/update/{id}:
     put:
       summary: Update city
       security:
@@ -92,7 +90,6 @@ paths:
         "404":
           description: Not found
 
-  /cities/delete/{id}:
     delete:
       summary: Delete city
       security:
@@ -111,14 +108,14 @@ paths:
 
   /cities/stats:
     get:
-      summary: Weather statistics list per city for current year
+      summary: Yearly weather stats grouped by city
       security:
         - basicAuth: []
       responses:
-        200:
+        "200":
           description: OK
 
-  /forecasts/create:
+  /forecasts:
     post:
       summary: Create forecast
       security:
@@ -149,7 +146,6 @@ paths:
         "422":
           description: Validation error
 
-  /forecasts/list:
     get:
       summary: List all forecasts
       security:
@@ -158,7 +154,7 @@ paths:
         "200":
           description: OK
 
-  /forecasts/details/{id}:
+  /forecasts/{id}:
     get:
       summary: Get forecast by ID
       security:
@@ -175,7 +171,6 @@ paths:
         "404":
           description: Not found
 
-  /forecasts/update/{id}:
     put:
       summary: Update forecast
       security:
@@ -205,7 +200,6 @@ paths:
         "404":
           description: Not found
 
-  /forecasts/delete/{id}:
     delete:
       summary: Delete forecast
       security:
@@ -224,7 +218,7 @@ paths:
 
   /forecasts/city/{cityId}:
     get:
-      summary: List forecasts for city
+      summary: List forecasts for a specific city
       security:
         - basicAuth: []
       parameters:
@@ -244,6 +238,34 @@ paths:
       summary: List forecasts for next 7 days
       security:
         - basicAuth: []
+      parameters:
+        - name: cityId
+          in: query
+          required: false
+          schema:
+            type: integer
       responses:
         "200":
           description: OK
+
+  /forecasts/top/{type}:
+    get:
+      summary: Returns cities with most days of specified weather type
+      security:
+        - basicAuth: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: year
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+        "422":
+          description: Invalid weather type

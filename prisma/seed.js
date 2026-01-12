@@ -53,7 +53,7 @@ function randomComment(type) {
 }
 
 async function main() {
-  console.log("🌱 Seeding database...");
+  console.log("Seeding database...");
 
   await prisma.forecast.deleteMany();
   await prisma.city.deleteMany();
@@ -100,7 +100,7 @@ async function main() {
     );
   }
 
-  console.log("🌱 Seeding gotovo!");
+  console.log("Seeding done!");
 }
 
 main()

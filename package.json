@@ -11,6 +11,9 @@
     "seed": "prisma db seed",
     "test": "mocha --exit -r dotenv/config \"tests/**/*.spec.js\""
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

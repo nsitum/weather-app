@@ -1,0 +1,35 @@
+{
+  "name": "weather-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:generate": "prisma generate",
+    "seed": "prisma db seed",
+    "test": "mocha --exit -r dotenv/config \"tests/**/*.spec.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/router": "^15.2.0",
+    "@prisma/client": "^6.19.1",
+    "@prisma/engines": "^6.19.1",
+    "dotenv": "^17.2.3",
+    "koa": "^3.1.1",
+    "koa-bodyparser": "^4.4.1",
+    "koa-static": "^5.0.0",
+    "prisma": "^6.19.1",
+    "swagger-ui-koa": "^0.0.1",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "chai": "^6.2.2",
+    "mocha": "^11.7.5",
+    "nodemon": "^3.1.11",
+    "supertest": "^7.2.2"
+  }
+}

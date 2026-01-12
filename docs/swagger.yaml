@@ -1,0 +1,240 @@
+openapi: 3.0.0
+info:
+  title: Weather API
+  description: Weather forecasts and cities API for seminar
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+security:
+  - basicAuth: []
+
+paths:
+  /cities/create:
+    post:
+      summary: Create a city
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+      responses:
+        "201":
+          description: Created
+        "409":
+          description: City already exists
+        "422":
+          description: Validation error
+
+  /cities/list:
+    get:
+      summary: List all cities
+      security:
+        - basicAuth: []
+      responses:
+        "200":
+          description: OK
+
+  /cities/details/{id}:
+    get:
+      summary: Get city by ID
+      security:
+        - basicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+
+  /cities/update/{id}:
+    put:
+      summary: Update city
+      security:
+        - basicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        "200":
+          description: Updated
+        "404":
+          description: Not found
+
+  /cities/delete/{id}:
+    delete:
+      summary: Delete city
+      security:
+        - basicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+        "404":
+          description: Not found
+
+  /forecasts/create:
+    post:
+      summary: Create forecast
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cityId
+                - type
+                - time
+              properties:
+                cityId:
+                  type: integer
+                type:
+                  type: string
+                time:
+                  type: string
+                  format: date-time
+                comment:
+                  type: string
+      responses:
+        "201":
+          description: Created
+        "422":
+          description: Validation error
+
+  /forecasts/list:
+    get:
+      summary: List all forecasts
+      security:
+        - basicAuth: []
+      responses:
+        "200":
+          description: OK
+
+  /forecasts/details/{id}:
+    get:
+      summary: Get forecast by ID
+      security:
+        - basicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+
+  /forecasts/update/{id}:
+    put:
+      summary: Update forecast
+      security:
+        - basicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                time:
+                  type: string
+                  format: date-time
+                comment:
+                  type: string
+      responses:
+        "200":
+          description: Updated
+        "404":
+          description: Not found
+
+  /forecasts/delete/{id}:
+    delete:
+      summary: Delete forecast
+      security:
+        - basicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+        "404":
+          description: Not found
+
+  /forecasts/city/{cityId}:
+    get:
+      summary: List forecasts for city
+      security:
+        - basicAuth: []
+      parameters:
+        - name: cityId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: City not found
+
+  /forecasts/week:
+    get:
+      summary: List forecasts for next 7 days
+      security:
+        - basicAuth: []
+      responses:
+        "200":
+          description: OK
